@@ -21,7 +21,7 @@ transformer:
   num_heads: 12
   mlp_ratio: 4
   dropout: 0.1
-  max_seq_len: 8192
+  max_seq_len: 12288
   num_special_tokens: 3  # BOS, EOS, SEP
   cross_attn_every_n: 2  # cross-attention every N layers
 
