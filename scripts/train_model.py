@@ -60,7 +60,7 @@ def train(cfg, args):
     image_transform = TopDownEncoder.get_image_transform()
     dataset = GaussianSplatDataset(
         root_dir=args.data_dir,
-        tokenizer=tokenizer,
+        tokenizer=None,  # tokenize on GPU in training loop, not in DataLoader workers
         image_transform=image_transform,
         max_gaussians=cfg.data.max_gaussians,
     )
@@ -103,8 +103,14 @@ def train(cfg, args):
 
         for batch in tqdm(loader, desc=f"Epoch {epoch+1}", leave=False):
             images = batch["image"].to(device)
-            gaussian_tokens = batch["gaussian_tokens"].to(device)  # (B, N, Q)
+            gaussian_params = batch["gaussian_params"].to(device)  # (B, N, 59)
             num_gaussians = batch["num_gaussians"]
+
+            # tokenize on GPU
+            B, N, D = gaussian_params.shape
+            with torch.no_grad():
+                indices, _ = tokenizer.encode(gaussian_params.reshape(B * N, D))
+                gaussian_tokens = indices.reshape(B, N, -1)
 
             # encode top-down image → conditioning tokens
             context = encoder(images)
