@@ -1,0 +1,20 @@
+Metadata-Version: 2.4
+Name: autoreg-splat
+Version: 0.1.0
+Summary: Autoregressive 3D Gaussian Splatting — a world model for 3D reconstruction
+Requires-Python: >=3.9
+Requires-Dist: torch>=2.1.0
+Requires-Dist: torchvision>=0.16.0
+Requires-Dist: numpy>=1.24.0
+Requires-Dist: einops>=0.7.0
+Requires-Dist: omegaconf>=2.3.0
+Requires-Dist: wandb>=0.16.0
+Requires-Dist: tqdm>=4.66.0
+Requires-Dist: Pillow>=10.0.0
+Requires-Dist: plyfile>=1.0
+Requires-Dist: scipy>=1.11.0
+Provides-Extra: dev
+Requires-Dist: pytest>=7.0; extra == "dev"
+Requires-Dist: ruff>=0.1.0; extra == "dev"
+Provides-Extra: render
+Requires-Dist: gsplat>=0.1.0; extra == "render"
