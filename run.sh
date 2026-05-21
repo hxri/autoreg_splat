@@ -9,6 +9,12 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR"
 
+# GPU selection: pass as 2nd arg, env var, or defaults to GPU 0
+# Usage: ./run.sh 5000 0      (5000 scenes, GPU 0)
+#        ./run.sh 5000 1      (5000 scenes, GPU 1)
+#        GPU=2 ./run.sh       (env var)
+export CUDA_VISIBLE_DEVICES="${2:-${GPU:-0}}"
+
 NUM_SCENES="${1:-5000}"
 CONFIG="configs/default.yaml"
 DATA_DIR="data/synthetic"
@@ -19,6 +25,7 @@ OUTPUT_DIR="outputs"
 echo "════════════════════════════════════════════════════════"
 echo "  AutoReg Splat — Full Training Pipeline"
 echo "  Scenes: ${NUM_SCENES}"
+echo "  GPU:    ${CUDA_VISIBLE_DEVICES}"
 echo "  Config: ${CONFIG}"
 echo "════════════════════════════════════════════════════════"
 
