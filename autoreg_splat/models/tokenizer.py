@@ -48,9 +48,11 @@ class VectorQuantizer(nn.Module):
         return quantized_st, indices.reshape(z.shape[:-1]), commitment_loss
 
     def _ema_update(self, flat: torch.Tensor, indices: torch.Tensor):
-        one_hot = F.one_hot(indices, self.codebook_size).float()
-        cluster_size = one_hot.sum(dim=0)
-        embed_sum = one_hot.t() @ flat
+        cluster_size = torch.zeros(self.codebook_size, device=flat.device)
+        cluster_size.scatter_add_(0, indices, torch.ones_like(indices, dtype=torch.float))
+
+        embed_sum = torch.zeros_like(self.ema_embed_sum)
+        embed_sum.scatter_add_(0, indices.unsqueeze(1).expand_as(flat), flat)
 
         self.ema_cluster_size.mul_(self.ema_decay).add_(cluster_size, alpha=1 - self.ema_decay)
         self.ema_embed_sum.mul_(self.ema_decay).add_(embed_sum, alpha=1 - self.ema_decay)
